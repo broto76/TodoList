@@ -9,38 +9,33 @@ import androidx.recyclerview.widget.RecyclerView
 import com.broto.todolist.R
 import com.broto.todolist.data.models.Priority
 import com.broto.todolist.data.models.ToDoData
+import com.broto.todolist.databinding.RowLayoutBinding
 import kotlinx.android.synthetic.main.row_layout.view.*
 
 class TodoListAdapter: RecyclerView.Adapter<TodoListAdapter.TodoHolder>() {
 
-    var dataList = emptyList<ToDoData>()
+    private var dataList = emptyList<ToDoData>()
 
-    class TodoHolder(view: View): RecyclerView.ViewHolder(view){}
+    class TodoHolder(private val binding: RowLayoutBinding): RecyclerView.ViewHolder(binding.root) {
+        fun bind(todoData: ToDoData) {
+            binding.todoData = todoData
+            binding.executePendingBindings()
+        }
+        companion object {
+            fun from(parent: ViewGroup): TodoHolder {
+                val layoutInflator = LayoutInflater.from(parent.context)
+                val binding = RowLayoutBinding.inflate(layoutInflator, parent, false)
+                return TodoHolder(binding)
+            }
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoHolder {
-        return TodoHolder(LayoutInflater.from(parent.context)
-            .inflate(R.layout.row_layout, parent, false))
+        return TodoHolder.from(parent)
     }
 
     override fun onBindViewHolder(holder: TodoHolder, position: Int) {
-        holder.itemView.tv_title.text = dataList[position].title
-        holder.itemView.tv_description.text = dataList[position].description
-        holder.itemView.row_background.setOnClickListener {
-            val action = ListFragmentDirections.actionListFragmentToUpdateFragment(dataList[position])
-            holder.itemView.findNavController()
-                .navigate(action)
-        }
-
-        val priority = dataList[position].priority
-        holder.itemView.card_priority_indicator.setCardBackgroundColor(
-            ContextCompat.getColor(holder.itemView.context,
-                when(priority) {
-                    Priority.HIGH -> R.color.red
-                    Priority.MEDIUM -> R.color.yellow
-                    else -> R.color.green
-                }
-            )
-        )
+        holder.bind(dataList[position])
     }
 
     override fun getItemCount(): Int {

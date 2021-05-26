@@ -11,6 +11,7 @@ import androidx.navigation.fragment.navArgs
 import com.broto.todolist.R
 import com.broto.todolist.data.models.ToDoData
 import com.broto.todolist.data.viewmodel.TodoViewModel
+import com.broto.todolist.databinding.FragmentUpdateBinding
 import com.broto.todolist.fragments.SharedViewModel
 import kotlinx.android.synthetic.main.fragment_update.*
 import kotlinx.android.synthetic.main.fragment_update.view.*
@@ -21,19 +22,23 @@ class UpdateFragment : Fragment() {
     private val mSharedViewModel: SharedViewModel by viewModels()
     private val mTodoViewModel: TodoViewModel by viewModels()
 
+    private var _binding: FragmentUpdateBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_update, container, false)
+        //val view = inflater.inflate(R.layout.fragment_update, container, false)
+        _binding = FragmentUpdateBinding.inflate(inflater, container, false)
+        binding.args = args.currentItem
 
         setHasOptionsMenu(true)
-        view.et_title_update.setText(args.currentItem.title)
-        view.et_description_update.setText(args.currentItem.description)
-        view.spinner_priority_update.setSelection(mSharedViewModel.parsePrioritytoInt(args.currentItem.priority))
-        view.spinner_priority_update.onItemSelectedListener = mSharedViewModel.mSpinnerTextListener
 
-        return view
+        binding.spinnerPriorityUpdate.onItemSelectedListener =
+            mSharedViewModel.mSpinnerTextListener
+
+        return binding.root
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -98,7 +103,11 @@ class UpdateFragment : Fragment() {
                 Toast.LENGTH_SHORT
             ).show()
         }
+    }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }
