@@ -7,15 +7,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.broto.todolist.R
+import com.broto.todolist.data.models.ToDoData
 import com.broto.todolist.data.viewmodel.TodoViewModel
 import com.broto.todolist.databinding.FragmentListBinding
 import com.broto.todolist.fragments.SharedViewModel
-import kotlinx.android.synthetic.main.fragment_list.view.*
+import com.broto.todolist.fragments.list.adapter.TodoListAdapter
+import com.google.android.material.snackbar.Snackbar
 
 class ListFragment : Fragment() {
 
@@ -55,6 +56,31 @@ class ListFragment : Fragment() {
         val recyclerView = binding.recyclerView
         recyclerView.adapter = mAdapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        swipeToDelete(recyclerView)
+    }
+
+    private fun restoreDeletedItem(view: View, deletedItem: ToDoData, position: Int) {
+        Snackbar.make(
+            view,
+            "Deleted ${deletedItem.title}",
+            Snackbar.LENGTH_LONG
+        ).setAction("Undo") {
+            mTodoViewModel.insertData(deletedItem)
+        }.show()
+    }
+
+    private fun swipeToDelete(recyclerView: RecyclerView) {
+        val swipeToDeleteCallback = object: SwipeToDelete() {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val item = mAdapter.dataList[viewHolder.adapterPosition]
+                mTodoViewModel.deleteData(item)
+
+                // Show Snackbar to notify and undo action
+                restoreDeletedItem(viewHolder.itemView, item, viewHolder.adapterPosition)
+            }
+        }
+        val swipeToDelete = ItemTouchHelper(swipeToDeleteCallback)
+        swipeToDelete.attachToRecyclerView(recyclerView)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

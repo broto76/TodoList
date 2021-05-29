@@ -14,7 +14,7 @@ import com.broto.todolist.data.models.ToDoData
 
 class SharedViewModel(application: Application): AndroidViewModel(application) {
 
-    val mIsDatabaseEmpty: MutableLiveData<Boolean> = MutableLiveData(true)
+    val mIsDatabaseEmpty: MutableLiveData<Boolean> = MutableLiveData(false)
 
     fun checkIfDatabaseEmpty(data: List<ToDoData>) {
         mIsDatabaseEmpty.value = data.isEmpty()

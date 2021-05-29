@@ -1,20 +1,15 @@
-package com.broto.todolist.fragments.list
+package com.broto.todolist.fragments.list.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.navigation.findNavController
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.broto.todolist.R
-import com.broto.todolist.data.models.Priority
 import com.broto.todolist.data.models.ToDoData
 import com.broto.todolist.databinding.RowLayoutBinding
-import kotlinx.android.synthetic.main.row_layout.view.*
 
 class TodoListAdapter: RecyclerView.Adapter<TodoListAdapter.TodoHolder>() {
 
-    private var dataList = emptyList<ToDoData>()
+    var dataList = emptyList<ToDoData>()
 
     class TodoHolder(private val binding: RowLayoutBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(todoData: ToDoData) {
@@ -43,7 +38,9 @@ class TodoListAdapter: RecyclerView.Adapter<TodoListAdapter.TodoHolder>() {
     }
 
     fun setData(newList: List<ToDoData>) {
+        val todoDiffUtil = TodoDiffUtil(dataList, newList)
+        val todoDiffResult = DiffUtil.calculateDiff(todoDiffUtil)
         dataList = newList
-        notifyDataSetChanged()
+        todoDiffResult.dispatchUpdatesTo(this)
     }
 }
