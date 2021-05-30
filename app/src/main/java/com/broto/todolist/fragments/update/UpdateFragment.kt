@@ -13,8 +13,6 @@ import com.broto.todolist.data.models.ToDoData
 import com.broto.todolist.data.viewmodel.TodoViewModel
 import com.broto.todolist.databinding.FragmentUpdateBinding
 import com.broto.todolist.fragments.SharedViewModel
-import kotlinx.android.synthetic.main.fragment_update.*
-import kotlinx.android.synthetic.main.fragment_update.view.*
 
 class UpdateFragment : Fragment() {
 
@@ -76,9 +74,9 @@ class UpdateFragment : Fragment() {
     }
 
     private fun updateItem() {
-        val title = et_title_update.text.toString()
-        val priority = spinner_priority_update.selectedItem.toString()
-        val description = et_description_update.text.toString()
+        val title = binding.etTitleUpdate.text.toString()
+        val priority = binding.spinnerPriorityUpdate.selectedItem.toString()
+        val description = binding.etDescriptionUpdate.text.toString()
 
         if (mSharedViewModel.validateData(title, description)) {
             val updatedToDo = ToDoData(

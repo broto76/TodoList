@@ -11,24 +11,26 @@ import com.broto.todolist.R
 import com.broto.todolist.data.models.Priority
 import com.broto.todolist.data.models.ToDoData
 import com.broto.todolist.data.viewmodel.TodoViewModel
+import com.broto.todolist.databinding.FragmentAddBinding
 import com.broto.todolist.fragments.SharedViewModel
-import kotlinx.android.synthetic.main.fragment_add.*
-import kotlinx.android.synthetic.main.fragment_add.view.*
 
 class AddFragment : Fragment() {
 
     private val mTodoViewModel: TodoViewModel by viewModels()
     private val mSharedViewModel: SharedViewModel by viewModels()
 
+    private var _binding: FragmentAddBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_add, container, false)
+        _binding = FragmentAddBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
-        view.spinner_priority.onItemSelectedListener = mSharedViewModel.mSpinnerTextListener
-        return view
+        binding.spinnerPriority.onItemSelectedListener = mSharedViewModel.mSpinnerTextListener
+        return binding.root
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -46,9 +48,9 @@ class AddFragment : Fragment() {
     }
 
     private fun insertDataToRepository() {
-        val title = et_title.text.toString()
-        val priority = spinner_priority.selectedItem.toString()
-        val description = et_description.text.toString()
+        val title = binding.etTitle.text.toString()
+        val priority = binding.spinnerPriority.selectedItem.toString()
+        val description = binding.etDescription.text.toString()
 
         if (mSharedViewModel.validateData(title, description)) {
            val data = ToDoData(
@@ -71,6 +73,11 @@ class AddFragment : Fragment() {
                 Toast.LENGTH_SHORT
             ).show()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

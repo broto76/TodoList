@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.*
 import com.broto.todolist.R
 import com.broto.todolist.data.models.ToDoData
@@ -18,6 +19,7 @@ import com.broto.todolist.fragments.list.adapter.TodoListAdapter
 import com.broto.todolist.utils.hideKeyboard
 import com.google.android.material.snackbar.Snackbar
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
+import kotlinx.coroutines.coroutineScope
 
 class ListFragment : Fragment(), SearchView.OnQueryTextListener {
 
@@ -139,10 +141,8 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
     private fun searchDatabaseForQuery(query: String) {
         // Allow 0 or more characters at each end of the search string
         val searchQuery = "%$query%"
-        mTodoViewModel.searchQuery(searchQuery).observe(this) { list ->
-            list.let {
-                mAdapter.setData(it)
-            }
+        mTodoViewModel.searchQuery(searchQuery) {
+            mAdapter.setData(it)
         }
     }
 

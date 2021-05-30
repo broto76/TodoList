@@ -52,7 +52,12 @@ class TodoViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
-    fun searchQuery(query: String) : LiveData<List<ToDoData>> {
-        return repository.searchDataBase(query)
+    fun searchQuery(query: String, callbackUpdate: (List<ToDoData>) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = repository.searchDataBase(query)
+            viewModelScope.launch(Dispatchers.Main) {
+                callbackUpdate(result)
+            }
+        }
     }
 }
