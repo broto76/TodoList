@@ -1,11 +1,13 @@
 package com.broto.todolist.fragments.list
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.*
@@ -66,11 +68,12 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
     private fun restoreDeletedItem(view: View, deletedItem: ToDoData) {
         Snackbar.make(
             view,
-            "Deleted ${deletedItem.title}",
+            "Deleted '${deletedItem.title}'",
             Snackbar.LENGTH_LONG
         ).setAction("Undo") {
             mTodoViewModel.insertData(deletedItem)
-        }.show()
+        }.setActionTextColor(ContextCompat.getColor(requireContext(), R.color.ColorPrimaryLight))
+            .show()
     }
 
     private fun swipeToDelete(recyclerView: RecyclerView) {

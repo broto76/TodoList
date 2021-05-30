@@ -81,4 +81,7 @@ dependencies {
 
     // RecyclerView Animator
     implementation "jp.wasabeef:recyclerview-animators:3.0.0"
+
+    // Biometric Authentication
+    implementation("androidx.biometric:biometric:1.2.0-alpha03")
 }
