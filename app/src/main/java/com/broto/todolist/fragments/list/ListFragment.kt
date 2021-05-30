@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -104,6 +105,16 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
         when (item.itemId) {
             R.id.menu_delete_all -> {
                 confirmRemoveAll()
+            }
+            R.id.menu_priority_high -> {
+                mTodoViewModel.getListSortedHighPriority.observe(this, Observer {
+                    mAdapter.setData(it)
+                })
+            }
+            R.id.menu_priority_low -> {
+                mTodoViewModel.getListSortedLowPriority.observe(this, Observer {
+                    mAdapter.setData(it)
+                })
             }
         }
         return super.onOptionsItemSelected(item)

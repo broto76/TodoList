@@ -7,6 +7,8 @@ import com.broto.todolist.data.models.ToDoData
 class TodoRepository(private val todoDAO: TodoDAO) {
 
     val getAllData: LiveData<List<ToDoData>> = todoDAO.getAllData()
+    val getListSortedHighPriority = todoDAO.sortItemsByHighPriority()
+    val getListSortedLowPriority = todoDAO.sortItemsByLowPriority()
 
     suspend fun insertData(data: ToDoData) {
         todoDAO.insertData(data)
