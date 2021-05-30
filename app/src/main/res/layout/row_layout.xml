@@ -40,17 +40,19 @@
 
             <TextView
                 android:id="@+id/tv_title"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
                 android:text="@{todoData.title}"
                 android:textStyle="bold"
                 android:textSize="20sp"
                 android:maxLength="20"
                 android:textColor="@color/darkGray"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/card_priority_indicator"/>
 
             <TextView
                 android:id="@+id/tv_description"

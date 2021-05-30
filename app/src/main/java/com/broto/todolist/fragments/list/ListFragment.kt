@@ -9,9 +9,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.*
 import com.broto.todolist.R
 import com.broto.todolist.data.models.ToDoData
 import com.broto.todolist.data.viewmodel.TodoViewModel
@@ -59,14 +57,14 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
     private fun setUpRecyclerView() {
         val recyclerView = binding.recyclerView
         recyclerView.adapter = mAdapter
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         recyclerView.itemAnimator = SlideInUpAnimator().apply {
             addDuration = 300
         }
         swipeToDelete(recyclerView)
     }
 
-    private fun restoreDeletedItem(view: View, deletedItem: ToDoData, position: Int) {
+    private fun restoreDeletedItem(view: View, deletedItem: ToDoData) {
         Snackbar.make(
             view,
             "Deleted ${deletedItem.title}",
@@ -83,7 +81,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
                 mTodoViewModel.deleteData(item)
 
                 // Show Snackbar to notify and undo action
-                restoreDeletedItem(viewHolder.itemView, item, viewHolder.adapterPosition)
+                restoreDeletedItem(viewHolder.itemView, item)
             }
         }
         val swipeToDelete = ItemTouchHelper(swipeToDeleteCallback)
