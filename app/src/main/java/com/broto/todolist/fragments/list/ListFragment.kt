@@ -8,7 +8,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.*
 import com.broto.todolist.R
 import com.broto.todolist.data.models.ToDoData
@@ -16,13 +15,13 @@ import com.broto.todolist.data.viewmodel.TodoViewModel
 import com.broto.todolist.databinding.FragmentListBinding
 import com.broto.todolist.fragments.SharedViewModel
 import com.broto.todolist.fragments.list.adapter.TodoListAdapter
+import com.broto.todolist.utils.hideKeyboard
 import com.google.android.material.snackbar.Snackbar
-import jp.wasabeef.recyclerview.animators.LandingAnimator
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 
 class ListFragment : Fragment(), SearchView.OnQueryTextListener {
 
-    private val TAG = "ListFragment"
+    private val _TAG = "ListFragment"
 
     private val mAdapter: TodoListAdapter by lazy { TodoListAdapter() }
     private val mTodoViewModel: TodoViewModel by viewModels()
@@ -43,13 +42,16 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
         setUpRecyclerView()
 
         mTodoViewModel.getAllData.observe(viewLifecycleOwner, { data ->
-            Log.d(TAG, "Data sent from livedata observer")
+            Log.d(_TAG, "Data sent from livedata observer")
             mSharedViewModel.checkIfDatabaseEmpty(data)
             mAdapter.setData(data)
         })
 
         // Set Menu
         setHasOptionsMenu(true)
+
+        // Hide Keyboard
+        hideKeyboard(requireActivity())
 
         return binding.root
     }
@@ -105,12 +107,12 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
                 confirmRemoveAll()
             }
             R.id.menu_priority_high -> {
-                mTodoViewModel.getListSortedHighPriority.observe(this, Observer {
+                mTodoViewModel.getListSortedHighPriority.observe(this, {
                     mAdapter.setData(it)
                 })
             }
             R.id.menu_priority_low -> {
-                mTodoViewModel.getListSortedLowPriority.observe(this, Observer {
+                mTodoViewModel.getListSortedLowPriority.observe(this, {
                     mAdapter.setData(it)
                 })
             }
