@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -17,8 +18,10 @@ import com.broto.todolist.databinding.FragmentListBinding
 import com.broto.todolist.fragments.SharedViewModel
 import com.broto.todolist.fragments.list.adapter.TodoListAdapter
 import com.google.android.material.snackbar.Snackbar
+import jp.wasabeef.recyclerview.animators.LandingAnimator
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 
-class ListFragment : Fragment() {
+class ListFragment : Fragment(), SearchView.OnQueryTextListener {
 
     private val TAG = "ListFragment"
 
@@ -56,6 +59,9 @@ class ListFragment : Fragment() {
         val recyclerView = binding.recyclerView
         recyclerView.adapter = mAdapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.itemAnimator = SlideInUpAnimator().apply {
+            addDuration = 300
+        }
         swipeToDelete(recyclerView)
     }
 
@@ -85,6 +91,12 @@ class ListFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.list_fragment_menu, menu)
+
+        val search = menu.findItem(R.id.menu_search)
+        val searchView = search.actionView as SearchView
+        searchView.isSubmitButtonEnabled = true
+        searchView.setOnQueryTextListener(this)
+
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -95,6 +107,32 @@ class ListFragment : Fragment() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        if (query != null) {
+            searchDatabaseForQuery(query)
+        }
+        return true
+    }
+
+    override fun onQueryTextChange(query: String?): Boolean {
+        if (query != null) {
+            searchDatabaseForQuery(query)
+        }
+        return true
+    }
+
+
+    private fun searchDatabaseForQuery(query: String) {
+        // Allow 0 or more characters at each end of the search string
+        val searchQuery = "%$query%"
+        mTodoViewModel.searchQuery(searchQuery).observe(this) { list ->
+            list.let {
+                mAdapter.setData(it)
+            }
+        }
     }
 
     private fun confirmRemoveAll() {
