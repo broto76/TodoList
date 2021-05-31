@@ -19,4 +19,7 @@
         <item>Medium Priority</item>
         <item>Low Priority</item>
     </string-array>
+
+    <string name="splash_auth_dialog_title">Unlock Todo App</string>
+    <string name="splash_auth_dialog_description">Place your finger over the fingerprint scanner for biometric verification.</string>
 </resources>

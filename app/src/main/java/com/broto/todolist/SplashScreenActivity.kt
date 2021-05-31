@@ -1,11 +1,8 @@
 package com.broto.todolist
 
-
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import com.broto.todolist.databinding.ActivitySplashScreenBinding
@@ -24,6 +21,7 @@ class SplashScreenActivity : AppCompatActivity() {
     private val binding get() = _binding!!
 
     private lateinit var mBiometricPrompt: BiometricPrompt
+    private var mSnackbar: Snackbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,8 +29,10 @@ class SplashScreenActivity : AppCompatActivity() {
         _binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.ivSplashImage.animate()
+
         CoroutineScope(Dispatchers.Main).launch {
-            delay(1500)
+            delay(2000)
             authenticateUser()
         }
     }
@@ -43,9 +43,9 @@ class SplashScreenActivity : AppCompatActivity() {
             object: BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     CoroutineScope(Dispatchers.Main).launch {
-                        Snackbar
+                        mSnackbar = Snackbar
                             .make(binding.root, "Failed To Verify", Snackbar.LENGTH_SHORT)
-                            .show()
+                        mSnackbar?.show()
                         delay(4000)
                         finish()
                     }
@@ -53,15 +53,16 @@ class SplashScreenActivity : AppCompatActivity() {
 
                 override fun onAuthenticationFailed() {
                     CoroutineScope(Dispatchers.Main).launch {
-                        Snackbar
+                        mSnackbar = Snackbar
                             .make(binding.root, "Failed To Verify", Snackbar.LENGTH_SHORT)
-                            .show()
-                        delay(4000)
-                        finish()
+                        mSnackbar?.show()
                     }
                 }
 
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    if (mSnackbar?.isShown == true) {
+                        mSnackbar?.dismiss()
+                    }
                     startActivity(Intent(this@SplashScreenActivity,
                         MainActivity::class.java))
                     finish()
@@ -69,8 +70,8 @@ class SplashScreenActivity : AppCompatActivity() {
         })
 
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Waiting for Authentication")
-            .setDescription("Place your finger over the fingerprint scanner")
+            .setTitle(getString(R.string.splash_auth_dialog_title))
+            .setDescription(getString(R.string.splash_auth_dialog_description))
             .setNegativeButtonText("Cancel")
             .build()
 
